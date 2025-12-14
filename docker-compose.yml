@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  # Backend HTTPS - for external access via Cloudflare
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sdgs_backend
+    restart: always
+    env_file:
+      - ./backend/.env
+    ports:
+      - "9000:9000"
+    volumes:
+      - /etc/ssl/cloudflare:/etc/ssl/cloudflare:ro
+      - ./backend:/app
+    networks:
+      - sdgs_network
+    command: >
+      uvicorn main:app
+      --host 0.0.0.0
+      --port 9000
+      --ssl-certfile /etc/ssl/cloudflare/origin.pem
+      --ssl-keyfile /etc/ssl/cloudflare/origin-key.pem
+
+  # Backend HTTP - for internal Docker networking (Next.js proxy)
+  backend_internal:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sdgs_backend_internal
+    restart: always
+    env_file:
+      - ./backend/.env
+    volumes:
+      - ./backend:/app
+    networks:
+      - sdgs_network
+    command: uvicorn main:app --host 0.0.0.0 --port 8000
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: sdgs_frontend
+    restart: always
+    env_file:
+      - ./frontend/.env.local
+    environment:
+      # Allow self-signed SSL for internal Docker communication with backend
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+    ports:
+      - "3000:3000"
+    networks:
+      - sdgs_network
+    depends_on:
+      - backend
+    command: npm run start
+
+networks:
+  sdgs_network:
+    driver: bridge

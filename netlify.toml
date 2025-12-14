@@ -1,0 +1,15 @@
+[build]
+base = "frontend"
+command = "npm ci && npm run build"
+publish = ".next"
+
+[functions]
+node_bundler = "esbuild"
+
+[[plugins]]
+package = "@netlify/plugin-nextjs"
+
+[build.environment]
+NODE_VERSION = "20.18.1"   # <- ganti dari "20.19.4" atau "20.19.x"
+NPM_FLAGS = "--no-audit"
+

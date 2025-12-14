@@ -1,0 +1,10 @@
+tunnel: d244d231-3a06-4a64-858d-d3da4281796b
+credentials-file: /root/.cloudflared/d244d231-3a06-4a64-858d-d3da4281796b.json
+
+ingress:
+  # Frontend - Next.js application (HTTP)
+  - hostname: sdgswates.dpdns.org
+    service: http://localhost:3000
+  
+  # Catch-all rule (required)
+  - service: http_status:404
