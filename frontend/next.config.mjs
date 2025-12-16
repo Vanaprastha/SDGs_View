@@ -8,8 +8,6 @@ const nextConfig = {
     // ✅ Abaikan error ESLint saat build
     ignoreDuringBuilds: true,
   },
-  // Fix Supabase ESM import error
-  transpilePackages: ['@supabase/supabase-js'],
 
   // Proxy backend API requests to FastAPI server (using Docker container name - HTTP)
   async rewrites() {
