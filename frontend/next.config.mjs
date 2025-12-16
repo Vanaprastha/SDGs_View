@@ -10,9 +10,6 @@ const nextConfig = {
   },
   // Fix Supabase ESM import error
   transpilePackages: ['@supabase/supabase-js'],
-  experimental: {
-    serverComponentsExternalPackages: ['@supabase/supabase-js'],
-  },
 
   // Proxy backend API requests to FastAPI server (using Docker container name - HTTP)
   async rewrites() {
@@ -26,3 +23,4 @@ const nextConfig = {
 };
 
 export default nextConfig;
+
